@@ -1,0 +1,49 @@
+spring:
+  application.name: web-gateway
+
+  cloud:
+    gateway:
+      default-filters:
+        - name: LoggingFilter
+          args:
+            baseMessage: Spring Cloud Gateway Filter
+            preLogger: true
+            postLogger: true
+
+      routes:
+        - id: member-api
+          uri: http://localhost:8082/
+          predicates:
+            - Path=/member-api/**
+            - Method=GET
+          filters:
+            - RewritePath=/member-api/(?<servicePath>.*), /api/$\{servicePath}
+            - AuthorizationHeaderFilter
+        - id: member-api
+          uri: http://localhost:8082/
+          predicates:
+            - Path=/member-api/login
+            - Method=POST
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/member-api/(?<servicePath>.*), /$\{servicePath}
+        - id: member-api
+          uri: http://localhost:8082/
+          predicates:
+            - Path=/member-api/**
+            - Method=POST
+          filters:
+            - RewritePath=/member-api/(?<servicePath>.*), /api/$\{servicePath}
+
+        - id: product-api
+          uri: http://localhost:8084/
+          predicates:
+            - Path=/product-api/**
+          filters:
+            - RewritePath=/product-api/(?<servicePath>.*), /api/$\{servicePath}
+            #- AuthorizationHeaderFilter
+
+### jwt
+security.jwt:
+  secret-key: secret_key
+  expiration-time: 86400000
