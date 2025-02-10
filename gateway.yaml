@@ -26,7 +26,7 @@ spring:
             - Method=POST
           filters:
             - RemoveRequestHeader=Cookie
-            - RewritePath=/member-api/(?<servicePath>.*), /$\{servicePath}
+            - RewritePath=/member-api/(?<servicePath>.*), /api/$\{servicePath}
         - id: member-api
           uri: http://localhost:8082/
           predicates:
