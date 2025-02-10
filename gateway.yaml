@@ -3,6 +3,18 @@ spring:
 
   cloud:
     gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowed-origins: 'http://localhost:3000'
+            allow-credentials: true
+            allowed-methods:
+              - PUT
+              - GET
+              - POST
+              - DELETE
+              - OPTIONS
+              - 
       default-filters:
         - name: LoggingFilter
           args:
