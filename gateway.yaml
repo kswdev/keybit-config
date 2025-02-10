@@ -8,14 +8,16 @@ spring:
           '[/**]':
             allowed-origins: 'http://localhost:3000'
             allow-credentials: true
+            allowed-headers: '*'
             allowed-methods:
               - PUT
               - GET
               - POST
               - DELETE
               - OPTIONS
-              - 
+
       default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
         - name: LoggingFilter
           args:
             baseMessage: Spring Cloud Gateway Filter
@@ -23,7 +25,7 @@ spring:
             postLogger: true
 
       routes:
-        - id: member-api
+        - id: member-api-get
           uri: http://localhost:8082/
           predicates:
             - Path=/member-api/**
@@ -31,15 +33,15 @@ spring:
           filters:
             - RewritePath=/member-api/(?<servicePath>.*), /api/$\{servicePath}
             - AuthorizationHeaderFilter
-        - id: member-api
+        - id: member-api-login
           uri: http://localhost:8082/
           predicates:
             - Path=/member-api/login
-            - Method=POST
+            - Method=POST, OPTIONS
           filters:
             - RemoveRequestHeader=Cookie
-            - RewritePath=/member-api/(?<servicePath>.*), /api/$\{servicePath}
-        - id: member-api
+            - RewritePath=/member-api/(?<servicePath>.*), //$\{servicePath}
+        - id: member-api-post
           uri: http://localhost:8082/
           predicates:
             - Path=/member-api/**
@@ -59,3 +61,10 @@ spring:
 security.jwt:
   secret-key: secret_key
   expiration-time: 86400000
+
+
+### logging
+logging:
+  level:
+    org.springframework.cloud.gateway: trace
+    reactor.netty: trace
