@@ -42,3 +42,9 @@ consumers:
     order:
       group-id: order
       cancel: order_cancel
+
+producers:
+  topic:
+    product:
+      tag:
+        change: tag_changed
